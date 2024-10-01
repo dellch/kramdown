@@ -16,22 +16,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Ruby ${{ matrix.ruby-version }}
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true  # Caches 'bundle install' results
+          ruby-version: '3.1'
+          bundler-cache: true
 
       - name: Install Dependencies (apt-get)
         run: |
           sudo apt-get update
           sudo apt-get install -y tidy texlive-latex-base ghostscript
 
-      - name: Install Bundler
-        run: gem install bundler
-
-      - name: Install Gems
-        run: bundle install --jobs 3 --retry 3
+      - name: Install gems
+        run: |
+          gem install rake
+          gem install minitest stringex
+          gem install rouge
+          gem install memory_profiler
+          wget https://github.com/htacg/tidy-html5/releases/download/5.4.0/tidy-5.4.0-64bit.deb
+          sudo apt purge libtidy-0.99-0
+          sudo dpkg -i tidy-5.4.0-64bit.deb
 
       - name: Run Tests
-        run: bundle exec rake test
+        run: ruby -Ilib:test test/test_*
