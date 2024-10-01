@@ -13,19 +13,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps:
+steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Ruby
+      - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
-          bundler-cache: true 
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true  # Caches 'bundle install' results
 
-      - name: Install dependencies
+      - name: Install Dependencies (apt-get)
         run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
+          sudo apt-get update
+          sudo apt-get install -y tidy texlive-latex-base ghostscript
 
-      - name: Run tests
-        run: bundle exec rake test TEST=test/test_location.rb
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install Gems
+        run: bundle install --jobs 3 --retry 3
+
+      - name: Run Tests
+        run: bundle exec rake test
