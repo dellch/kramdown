@@ -134,7 +134,7 @@ describe 'location' do
       a para
 
       |first|second|third|
-      |-----|------|-----|
+      |---|---|---|
       |a    |b     |c    |
       {:.line-3}
     ),
